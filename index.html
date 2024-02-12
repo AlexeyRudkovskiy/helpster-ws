@@ -1,0 +1,72 @@
+<form>
+    <input type="number" id="clientId" value="10" />
+    <button id="register">Register</button>
+    <br>
+    <input type="text" id="chatId" value="chat1" />
+    <button id="join">Join chat</button>
+    <br>
+    <textarea id="message"></textarea>
+    <br>
+    <button id="send">Send</button>
+</form>
+<div style="max-width: 400px;" id="messages">
+
+</div>
+<script>
+    const socket = new WebSocket('ws://localhost:8080');
+
+    const register = document.querySelector('#register');
+    const join = document.querySelector('#join');
+    const send = document.querySelector('#send');
+
+    const clientId = document.querySelector('#clientId');
+    const chatId = document.querySelector('#chatId');
+    const message = document.querySelector('#message');
+
+    const messages = document.querySelector('#messages');
+
+    const appendMessage = (isMy, text) => {
+        const div = document.createElement('div');
+        div.innerHTML = `<b>${isMy ? 'You' : 'Support'}:</b> ${text}`;
+        div.setAttribute('style', 'padding: 10px;')
+        messages.appendChild(div);
+    }
+
+    const emit = (event, payload) => {
+        socket.send(JSON.stringify({ event, payload }));
+    }
+
+    register.addEventListener('click', (e) => {
+        e.preventDefault();
+        emit('register', { id: Number(clientId.value) });
+    });
+
+    join.addEventListener('click', e => {
+        e.preventDefault();
+        emit('join', { chatId: chatId.value });
+    })
+
+    send.addEventListener('click', e => {
+        e.preventDefault();
+        const text = message.value;
+        message.value = '';
+
+        emit('send', { chatId: chatId.value, message: text });
+        appendMessage(true, text);
+    });
+
+    // Когда приходит сообщение от сервера
+    socket.addEventListener('message', (e) => {
+        let data = e.data;
+        data = JSON.parse(data);
+        const { event, payload } = data;
+        const { message } = payload;
+        appendMessage(false, message);
+    });
+
+    // Когда соединение закрыто
+    socket.addEventListener('close', (event) => {
+        console.log('Соединение закрыто.');
+    });
+
+</script>

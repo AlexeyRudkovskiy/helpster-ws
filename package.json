@@ -1,0 +1,16 @@
+{
+  "name": "ws-server",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "redis": "^4.6.12",
+    "ws": "^8.14.2"
+  }
+}
