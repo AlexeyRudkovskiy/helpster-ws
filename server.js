@@ -5,7 +5,7 @@ import ChatContainer from "./chat-container.js";
 import Message from "./message.js";
 
 const port = 8080;
-const wss = new WebSocketServer({ port: port });
+const wss = new WebSocketServer({ port: port, host: '0.0.0.0' });
 
 const clients = [];
 const chatContainer = new ChatContainer();
